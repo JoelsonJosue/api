@@ -28,3 +28,7 @@ Route::post('usuarios/login', 'UsuariosController@login');*/
 
 Route::post('register', 'UserController@register');
 Route::post('login', 'UserController@login');
+
+Route::group(['middleware' => 'auth:api'], function() {
+    Route::resource('clientes', 'ClienteController');
+});

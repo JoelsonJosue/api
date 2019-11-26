@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Cliente;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class ClienteController extends Controller
 {
@@ -15,7 +16,9 @@ class ClienteController extends Controller
      */
     public function index()
     {
-        //
+        $clientes = Cliente::all();
+
+        return response()->json($clientes);
     }
 
     /**
@@ -40,8 +43,11 @@ class ClienteController extends Controller
         $validator = Validator::make($request->all(), [
             'codigo' => 'required|min:8|max:8',
             'nome' => 'required|min:6|max:255',
-            'sexo' => 'required|min:1|max:1',
-            'data_nascimento' => 'required|min:10|max:10'
+            'sexo' => [
+                'required',
+                Rule::in(['M', 'F'])
+            ],
+            'data_nascimento' => 'required|date_format:d/m/Y'
         ]);
 
         if($validator->fails()){
@@ -64,7 +70,7 @@ class ClienteController extends Controller
      */
     public function show(Cliente $cliente)
     {
-        //
+        return response()->json($cliente);
     }
 
     /**
