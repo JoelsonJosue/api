@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Usuarios;
+use App\Cliente;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
-class UsuariosController extends Controller
+class ClienteController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,9 +15,7 @@ class UsuariosController extends Controller
      */
     public function index()
     {
-        $usuarios = Usuarios::all();
-
-        return response()->json($usuarios);
+        //
     }
 
     /**
@@ -37,34 +36,44 @@ class UsuariosController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+        $validator = Validator::make($request->all(), [
+            'codigo' => 'required|min:8|max:8',
+            'nome' => 'required|min:6|max:255',
+            'sexo' => 'required|min:1|max:1',
+            'data_nascimento' => 'required|min:10|max:10'
+        ]);
+
+        if($validator->fails()){
+            $errors = $validator->errors();
+
+            return response()->json($errors, 400);
+        }
+
+        $cliente = Cliente::create($request->all());
+
+        return response(['cliente' => $cliente]);
+
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Usuarios  $usuarios
+     * @param  \App\Cliente  $cliente
      * @return \Illuminate\Http\Response
      */
-    public function show(Request $request, int $id)
+    public function show(Cliente $cliente)
     {
-        $usuario = Usuarios::find($id);
-        return response()->json($usuario);
+        //
     }
-    /*public function show(Usuarios $usuarios)
-    {   
-        var_dump($usuarios);
-        die;
-        return response()->json($usuarios);
-    }*/
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Usuarios  $usuarios
+     * @param  \App\Cliente  $cliente
      * @return \Illuminate\Http\Response
      */
-    public function edit(Usuarios $usuarios)
+    public function edit(Cliente $cliente)
     {
         //
     }
@@ -73,10 +82,10 @@ class UsuariosController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Usuarios  $usuarios
+     * @param  \App\Cliente  $cliente
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Usuarios $usuarios)
+    public function update(Request $request, Cliente $cliente)
     {
         //
     }
@@ -84,13 +93,11 @@ class UsuariosController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Usuarios  $usuarios
+     * @param  \App\Cliente  $cliente
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request, int $id)
+    public function destroy(Cliente $cliente)
     {
-        $usuario = Usuarios::find($id);
-        $usuario->delete();
-        return response()->json('Usuario deletado com sucesso!', 200);
+        //
     }
 }
