@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Cliente;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -41,7 +42,7 @@ class ClienteController extends Controller
     {
 
         $validator = Validator::make($request->all(), [
-            'codigo' => 'required|min:8|max:8',
+            'codigo' => 'required|min:8|max:8|unique:cliente',
             'nome' => 'required|min:6|max:255',
             'sexo' => [
                 'required',
@@ -93,7 +94,27 @@ class ClienteController extends Controller
      */
     public function update(Request $request, Cliente $cliente)
     {
-        //
+        
+        $validator = Validator::make($request->all(), [
+            'codigo' => 'required|min:8|max:8|unique:cliente,codigo,' . $cliente->id,
+            'nome' => 'required|min:6|max:255',
+            'sexo' => [
+                'required',
+                Rule::in(['M', 'F'])
+            ],
+            'data_nascimento' => 'required|date_format:d/m/Y'
+        ]);
+
+        if($validator->fails()){
+            $errors = $validator->errors();
+
+            return response()->json($errors, 400);
+        }
+
+        $cliente->update($request->all());
+
+        return response()->json($cliente);
+
     }
 
     /**
@@ -104,6 +125,7 @@ class ClienteController extends Controller
      */
     public function destroy(Cliente $cliente)
     {
-        //
+        $cliente->delete();
+        return response()->json('Cliente deletado com sucesso!', 200);
     }
 }

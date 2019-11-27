@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 use Exception;
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 
@@ -51,6 +52,8 @@ class Handler extends ExceptionHandler
         
         if ($exception instanceof RouteNotFoundException) {
             $erro = 'O Token informado não é válido!';
+        }if ($exception instanceof ModelNotFoundException) {
+            $erro = 'Informação não existe no banco de dados!';
         }else{
             $erro = parent::render($request, $exception);
         }
